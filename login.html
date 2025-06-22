@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeamTune - Login</title>
+    <!-- Favicon for browser tab -->
+    <link rel="icon" href="image/llogo-removebg-preview (1).png" type="image/png">
+    <link rel="shortcut icon" href="image/llogo-removebg-preview (1).png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-left-panel">
+            <div class="auth-left-content">
+                <div class="auth-logo-large">TeamTune</div>
+                <h1>Welcome Back!</h1>
+                <p>Track your team's mood and enhance workplace harmony with our intuitive platform.</p>
+                <div class="auth-illustration">
+                    <img src="image/llogo-removebg-preview (1).png" alt="Team Collaboration">
+                </div>
+            </div>
+        </div>
+        
+        <div class="auth-right-panel">
+            <div class="auth-card">
+                <div class="auth-logo">TeamTune</div>
+                <h2 class="auth-title">Login to Your Account</h2>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn">
+                        <span>Log In</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    
+                    <div class="auth-switch">
+                        Don't have an account? <a href="register.html">Register here</a>
+                    </div>
+                    
+                    <div class="auth-demo-accounts">
+                        <p>Demo Accounts:</p>
+                        <ul>
+                            <li>User: tim@naruto.com / password123</li>
+                            <li>Admin: admin@teamtune.com / admin123</li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeamTune - User Dashboard</title>
+    <!-- Favicon for browser tab -->
+    <link rel="icon" href="image/llogo-removebg-preview (1).png" type="image/png">
+    <link rel="shortcut icon" href="image/llogo-removebg-preview (1).png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-brand">TeamTune</div>
+        <div class="navbar-user">
+            <i class="fas fa-user-circle"></i> <span id="userName">Joko Anwar</span>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <div class="sidebar">
+            <ul>
+                <li class="sidebar-item active" data-target="moodCheckinSection">
+                    <i class="fas fa-smile"></i> Mood Check-In
+                </li>
+                <li class="sidebar-item" data-target="teamMoodMeterSection">
+                    <i class="fas fa-chart-bar"></i> Team Mood Meter
+                </li>
+                <li class="sidebar-item" data-target="smartFeedbackSection">
+                    <i class="fas fa-lightbulb"></i> Smart Feedback
+                </li>
+                <li class="sidebar-item" data-target="personalReflectionSection">
+                    <i class="fas fa-book-open"></i> Personal Reflection
+                </li>
+                <li class="sidebar-item" data-target="anonymousNoteSection">
+                    <i class="fas fa-paper-plane"></i> Anonymous Note
+                </li>
+            </ul>
+        </div>
+
+        <div class="content-area">
+            <div id="moodCheckinSection" class="content-section active-section">
+                <div class="card mood-checkin">
+                    <h2>Mood Check-In</h2>
+                    <div class="mood-emojis">
+                        <span class="emoji" data-mood="happy">😊</span>
+                        <span class="emoji" data-mood="neutral">😐</span>
+                        <span class="emoji" data-mood="sad">😞</span>
+                        <span class="emoji" data-mood="angry">😠</span>
+                        <span class="emoji" data-mood="stressed">😩</span>
+                    </div>
+                    <textarea id="moodComment" placeholder="Komentar opsional..."></textarea>
+                    <button onclick="submitMood()">Submit Mood</button>
+                </div>
+            </div>
+
+            <div id="teamMoodMeterSection" class="content-section">
+                <div class="card team-mood-meter">
+                    <h2>TeamMood Meter</h2>
+                    <canvas id="teamMoodChart"></canvas>
+                </div>
+            </div>
+
+            <div id="smartFeedbackSection" class="content-section">
+                <div class="card smart-feedback">
+                    <h2>Smart Feedback</h2>
+                    <p id="smartFeedbackText">Suasana tim terlihat tegang. Ayo saling dukung dan evaluasi bersama. Berikan semangat dan bantu teman yang kesulitan.</p>
+                </div>
+            </div>
+
+            <div id="personalReflectionSection" class="content-section">
+                <div class="card reflection-personal">
+                    <h2>Personal Reflection</h2>
+                    <div id="personalReflectionContent">
+                        <h3>Refleksi Pribadi Mingguan Anda</h3>
+                        <p>Minggu ini, mood Anda cenderung positif dengan beberapa fluktuasi kecil. Anda merasa bahagia 60% waktu, netral 30%, dan sedikit sedih 10%. Pertahankan energi positif ini!</p>
+                        <p>Tips: Perhatikan pola mood Anda saat proyek mendekati deadline. Mungkin ada pemicu stres yang bisa diantisipasi.</p>
+
+                        <h4>Riwayat Komentar Mood:</h4>
+                        <ul id="moodCommentHistory">
+                            <li>**2024-06-10 (😊):** Hari ini terasa produktif sekali.</li>
+                            <li>**2024-06-11 (😐):** Cukup sibuk tapi bisa diatasi.</li>
+                            <li>**2024-06-12 (😞):** Sedikit frustasi dengan bug di kode.</li>
+                            <li>**2024-06-13 (😊):** Berhasil menyelesaikan tugas besar!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="anonymousNoteSection" class="content-section">
+                <div class="card anonymous-note">
+                    <h2>Anonymous Note</h2>
+                    <textarea id="anonymousNoteText" placeholder="Tulis pesan anonim..."></textarea>
+                    <button onclick="submitAnonymousNote()">Kirim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/user.js"></script>
+</body>
+</html>
