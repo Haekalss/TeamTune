@@ -15,7 +15,7 @@ function initializeLocalData() {
     // Initialize users if not exist
     if (!localStorage.getItem(LOCAL_STORAGE.USERS)) {
         const dummyUsers = [
-            { id: '1', name: 'Tim Naruto', email: 'tim@naruto.com', password: 'password123', role: 'user' },
+            { id: '1', name: 'Joko Anwar', email: 'tim@naruto.com', password: 'password123', role: 'user' },
             { id: '2', name: 'Admin Fasilitator', email: 'admin@teamtune.com', password: 'admin123', role: 'admin' }
         ];
         localStorage.setItem(LOCAL_STORAGE.USERS, JSON.stringify(dummyUsers));
