@@ -32,17 +32,23 @@ function initializeLocalData() {
 document.addEventListener('DOMContentLoaded', () => {
     initializeLocalData();
     
-    // Check if user is already logged in - if so, redirect to appropriate dashboard
-    const currentUser = localStorage.getItem(LOCAL_STORAGE.CURRENT_USER);
-    if (currentUser) {
-        // User is already logged in, redirect based on role
-        const user = JSON.parse(currentUser);
-        if (user.role === 'admin') {
-            window.location.href = 'admin-dashboard.html';
-        } else {
-            window.location.href = 'user-dashboard.html';
+    // Check current page to avoid redirect loop
+    const currentPage = window.location.pathname.split('/').pop();
+    
+    // Only check for existing login on login/register pages
+    if (currentPage === 'login.html' || currentPage === 'register.html' || currentPage === '') {
+        // Check if user is already logged in - if so, redirect to appropriate dashboard
+        const currentUser = localStorage.getItem(LOCAL_STORAGE.CURRENT_USER);
+        if (currentUser) {
+            // User is already logged in, redirect based on role
+            const user = JSON.parse(currentUser);
+            if (user.role === 'admin') {
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                window.location.href = 'user-dashboard.html';
+            }
+            return;
         }
-        return;
     }
     
     // Check which form is on the page and set up the appropriate handlers

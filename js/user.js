@@ -241,10 +241,25 @@ function submitAnonymousNote() {
 
 // Mengambil data mood agregat tim dari local storage untuk chart dan smart feedback
 function loadTeamMoodDataForUserView() {
-    // Get all moods from local storage
+    // Check if user has a team
+    if (!CURRENT_USER.teamId) {
+        // No team - show message
+        const feedbackTextElement = document.getElementById('smartFeedbackText');
+        if (feedbackTextElement) {
+            feedbackTextElement.textContent = 'Anda belum bergabung dalam tim. Bergabunglah dalam tim untuk melihat mood meter dan mendapat feedback.';
+        }
+        return;
+    }
+
+    // Get all users and moods from local storage
+    const allUsers = JSON.parse(localStorage.getItem(LOCAL_STORAGE.USERS)) || [];
     const allMoods = JSON.parse(localStorage.getItem(LOCAL_STORAGE.MOODS)) || [];
     
-    // Count moods by type
+    // Get team members (users with same teamId)
+    const teamMembers = allUsers.filter(user => user.teamId === CURRENT_USER.teamId);
+    const teamMemberIds = teamMembers.map(member => member.id);
+    
+    // Count moods by type - only for team members
     const moodCounts = {
         happy: 0,
         neutral: 0,
@@ -253,13 +268,15 @@ function loadTeamMoodDataForUserView() {
         stressed: 0
     };
     
-    // Only count recent moods (last 7 days)
+    // Only count recent moods (last 7 days) from team members
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     
     allMoods.forEach(mood => {
         const moodDate = new Date(mood.timestamp);
-        if (moodDate >= oneWeekAgo && moodCounts.hasOwnProperty(mood.moodValue)) {
+        if (moodDate >= oneWeekAgo && 
+            teamMemberIds.includes(mood.userId) && 
+            moodCounts.hasOwnProperty(mood.moodValue)) {
             moodCounts[mood.moodValue]++;
         }
     });
@@ -279,21 +296,28 @@ function loadTeamMoodDataForUserView() {
         chartStatus.destroy();
     }
     
+    // Always render chart, even with empty data
     renderTeamMoodChart('teamMoodChart', statsData);
-    updateSmartFeedback(statsData);
+    updateSmartFeedback(statsData, teamMembers.length);
 }
 
 // Logika untuk menampilkan smart feedback berdasarkan data mood tim
-function updateSmartFeedback(moodStats) {
+function updateSmartFeedback(moodStats, teamSize = 0) {
     const feedbackTextElement = document.getElementById('smartFeedbackText');
     const [happy, neutral, sad, angry, stressed] = moodStats;
     const totalMoods = happy + neutral + sad + angry + stressed;
 
     if (totalMoods === 0) {
-        feedbackTextElement.textContent = 'Belum ada data mood tim yang cukup untuk memberikan feedback.';
-        feedbackTextElement.style.borderLeftColor = 'var(--secondary-color)';
-        feedbackTextElement.style.backgroundColor = 'var(--background-light)';
-        feedbackTextElement.style.color = 'var(--text-dark)';
+        if (teamSize === 1) {
+            feedbackTextElement.textContent = `Tim baru dengan 1 anggota. Mulai lakukan mood check-in dan ajak anggota lain untuk bergabung!`;
+        } else if (teamSize > 1) {
+            feedbackTextElement.textContent = `Tim memiliki ${teamSize} anggota tetapi belum ada mood check-in dalam 7 hari terakhir. Ajak anggota tim untuk mulai melakukan mood check-in!`;
+        } else {
+            feedbackTextElement.textContent = `Belum ada data mood tim yang cukup untuk memberikan feedback.`;
+        }
+        feedbackTextElement.style.borderLeftColor = '#6c757d';
+        feedbackTextElement.style.backgroundColor = '#f8f9fa';
+        feedbackTextElement.style.color = '#495057';
         return;
     }
 
@@ -307,20 +331,24 @@ function updateSmartFeedback(moodStats) {
     let feedbackTextColor = '#1E7C3B'; // Default teks hijau gelap
 
     if (negativePercentage >= 50) {
-        feedbackMessage = 'Suasana tim terlihat sangat tegang atau tidak harmonis. Segera adakan diskusi terbuka untuk mencari solusi dan meningkatkan dukungan antar anggota.';
+        feedbackMessage = `Suasana tim terlihat sangat tegang atau tidak harmonis (${Math.round(negativePercentage)}% mood negatif). Segera adakan diskusi terbuka untuk mencari solusi dan meningkatkan dukungan antar anggota.`;
         feedbackColor = 'var(--danger-color)';
         feedbackBgColor = '#FDEAEA';
         feedbackTextColor = '#A63F4B';
     } else if (negativePercentage >= 25) {
-        feedbackMessage = 'Terdeteksi adanya ketegangan atau ketidaknyamanan pada beberapa anggota tim. Perlu perhatian khusus untuk menjaga keseimbangan kerja tim.';
+        feedbackMessage = `Terdeteksi adanya ketegangan atau ketidaknyamanan pada beberapa anggota tim (${Math.round(negativePercentage)}% mood negatif). Perlu perhatian khusus untuk menjaga keseimbangan kerja tim.`;
         feedbackColor = 'var(--warning-color)';
         feedbackBgColor = '#FFF8E1';
         feedbackTextColor = '#8D6E00';
     } else {
-        feedbackMessage = 'Mood tim secara keseluruhan positif dan produktif. Pertahankan suasana kolaborasi yang baik ini!';
+        feedbackMessage = `Mood tim secara keseluruhan positif dan produktif (${Math.round(100-negativePercentage)}% mood positif). Pertahankan suasana kolaborasi yang baik ini!`;
         feedbackColor = 'var(--success-color)';
         feedbackBgColor = '#EBF9F1';
         feedbackTextColor = '#1E7C3B';
+    }
+
+    if (teamSize > 0) {
+        feedbackMessage += ` (Tim: ${teamSize} anggota, Data minggu ini: ${totalMoods} mood entries)`;
     }
 
     feedbackTextElement.textContent = feedbackMessage;
@@ -392,3 +420,20 @@ function renderTeamMoodChart(canvasId, data) {
         }
     });
 }
+document.addEventListener("DOMContentLoaded", () => {
+    const currentUser = JSON.parse(localStorage.getItem("teamtune_current_user"));
+    if (!currentUser) return;
+
+    const teamInfoDiv = document.getElementById("userTeamInfo");
+    const teams = JSON.parse(localStorage.getItem("teamtune_teams") || "[]");
+    const userTeam = teams.find(t => t.id === currentUser.teamId);
+
+    if (userTeam) {
+        teamInfoDiv.innerHTML = `
+            <p><strong>Nama Tim:</strong> ${userTeam.name}</p>
+            <p><strong>Kode Tim:</strong> ${userTeam.code}</p>
+        `;
+    } else {
+        teamInfoDiv.innerHTML = `<p>Anda belum tergabung dalam tim mana pun.</p>`;
+    }
+});

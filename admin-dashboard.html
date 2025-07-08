@@ -28,6 +28,9 @@
                 <li class="sidebar-item" data-target="anonymousNotesSection">
                     <i class="fas fa-envelope"></i> Catatan Anonim
                 </li>
+                <li class="sidebar-item" data-target="teamListSection">
+                    <i class="fas fa-users"></i> Daftar Tim
+                </li>
             </ul>
         </div>
 
@@ -45,8 +48,15 @@
 
             <div id="statisticMoodTimSection" class="content-section">
                 <div class="card statistic-mood-tim">
-                    <h2>Statistik Mood Tim</h2>
+                    <h2>Statistik Mood Semua Tim</h2>
+                    <div id="teamSelector" style="margin-bottom: 20px;">
+                        <label for="teamSelectDropdown">Pilih Tim:</label>
+                        <select id="teamSelectDropdown" onchange="loadSelectedTeamMoodChart()" style="padding: 8px; margin-left: 10px;">
+                            <option value="all">Semua Tim (Gabungan)</option>
+                        </select>
+                    </div>
                     <canvas id="teamMoodAdminChart"></canvas>
+                    <div id="teamMoodSummary" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;"></div>
                 </div>
             </div>
 
@@ -61,10 +71,202 @@
                     </ul>
                 </div>
             </div>
+
+            <div id="teamListSection" class="content-section">
+                <div class="card team-list">
+                    <h2>Daftar Tim & Anggota</h2>
+                    <div id="teamListContent"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/admin.js"></script>
+    <script>
+        // Tambahan script untuk load tim
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTeamListFromStorage();
+            loadTeamSelector();
+            loadSelectedTeamMoodChart();
+        });
+
+        function loadTeamSelector() {
+            const teamSelectDropdown = document.getElementById('teamSelectDropdown');
+            const teams = JSON.parse(localStorage.getItem('teams') || '[]');
+            
+            // Clear existing options except "Semua Tim"
+            teamSelectDropdown.innerHTML = '<option value="all">Semua Tim (Gabungan)</option>';
+            
+            teams.forEach(team => {
+                const option = document.createElement('option');
+                option.value = team.id;
+                option.textContent = team.name;
+                teamSelectDropdown.appendChild(option);
+            });
+        }
+
+        function loadSelectedTeamMoodChart() {
+            const selectedTeamId = document.getElementById('teamSelectDropdown').value;
+            const teams = JSON.parse(localStorage.getItem('teams') || '[]');
+            const users = JSON.parse(localStorage.getItem('teamtune_users') || '[]');
+            const moods = JSON.parse(localStorage.getItem('teamtune_moods') || '[]');
+            
+            let targetUsers = [];
+            let teamName = 'Semua Tim';
+            
+            if (selectedTeamId === 'all') {
+                targetUsers = users;
+            } else {
+                const selectedTeam = teams.find(t => t.id === selectedTeamId);
+                if (selectedTeam) {
+                    teamName = selectedTeam.name;
+                    targetUsers = users.filter(u => u.teamId === selectedTeamId);
+                }
+            }
+            
+            const targetUserIds = targetUsers.map(u => u.id);
+            
+            // Count moods by type for target users in last 7 days
+            const moodCounts = { happy: 0, neutral: 0, sad: 0, angry: 0, stressed: 0 };
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            
+            moods.forEach(mood => {
+                const moodDate = new Date(mood.timestamp);
+                if (moodDate >= oneWeekAgo && 
+                    targetUserIds.includes(mood.userId) && 
+                    moodCounts.hasOwnProperty(mood.moodValue)) {
+                    moodCounts[mood.moodValue]++;
+                }
+            });
+            
+            const statsData = [moodCounts.happy, moodCounts.neutral, moodCounts.sad, moodCounts.angry, moodCounts.stressed];
+            
+            // Destroy existing chart
+            let chartStatus = Chart.getChart("teamMoodAdminChart");
+            if (chartStatus != undefined) {
+                chartStatus.destroy();
+            }
+            
+            // Render chart
+            renderAdminTeamMoodChart('teamMoodAdminChart', statsData);
+            
+            // Update summary
+            updateTeamMoodSummary(teamName, targetUsers.length, statsData);
+        }
+
+        function renderAdminTeamMoodChart(canvasId, data) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['😊 Happy', '😐 Neutral', '😞 Sad', '😠 Angry', '😩 Stressed'],
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ['#28a745', '#6c757d', '#ffc107', '#dc3545', '#fd7e14'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        title: {
+                            display: true,
+                            text: 'Distribusi Mood Tim (7 Hari Terakhir)'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateTeamMoodSummary(teamName, memberCount, moodData) {
+            const summaryDiv = document.getElementById('teamMoodSummary');
+            const [happy, neutral, sad, angry, stressed] = moodData;
+            const total = happy + neutral + sad + angry + stressed;
+            
+            if (total === 0) {
+                summaryDiv.innerHTML = `
+                    <h4>${teamName}</h4>
+                    <p>Belum ada data mood untuk tim ini dalam 7 hari terakhir.</p>
+                    <p><strong>Jumlah Anggota:</strong> ${memberCount}</p>
+                `;
+                return;
+            }
+            
+            const negativeCount = sad + angry + stressed;
+            const negativePercentage = Math.round((negativeCount / total) * 100);
+            const positivePercentage = Math.round((happy / total) * 100);
+            
+            let alertLevel = '';
+            let alertColor = '';
+            
+            if (negativePercentage >= 50) {
+                alertLevel = '🚨 PERLU PERHATIAN KHUSUS';
+                alertColor = '#dc3545';
+            } else if (negativePercentage >= 25) {
+                alertLevel = '⚠️ PANTAU TERUS';
+                alertColor = '#ffc107';
+            } else {
+                alertLevel = '✅ KONDISI BAIK';
+                alertColor = '#28a745';
+            }
+            
+            summaryDiv.innerHTML = `
+                <h4>${teamName}</h4>
+                <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                    <div><strong>Anggota:</strong> ${memberCount}</div>
+                    <div><strong>Total Mood Entries:</strong> ${total}</div>
+                </div>
+                <div style="background: ${alertColor}; color: white; padding: 10px; border-radius: 5px; text-align: center; margin: 10px 0;">
+                    <strong>${alertLevel}</strong>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                    <div>😊 Happy: ${happy} (${Math.round((happy/total)*100)}%)</div>
+                    <div>😐 Neutral: ${neutral} (${Math.round((neutral/total)*100)}%)</div>
+                    <div>😞 Sad: ${sad} (${Math.round((sad/total)*100)}%)</div>
+                    <div>😠 Angry: ${angry} (${Math.round((angry/total)*100)}%)</div>
+                    <div>😩 Stressed: ${stressed} (${Math.round((stressed/total)*100)}%)</div>
+                </div>
+            `;
+        }
+
+        function loadTeamListFromStorage() {
+            const teamListDiv = document.getElementById('teamListContent');
+            const teams = JSON.parse(localStorage.getItem('teams') || '[]');
+            const users = JSON.parse(localStorage.getItem('teamtune_users') || '[]');
+            
+            if (teams.length === 0) {
+                teamListDiv.innerHTML = '<p>Belum ada tim yang terdaftar.</p>';
+                return;
+            }
+
+            let html = '';
+            teams.forEach(team => {
+                const teamMembers = users.filter(user => user.teamId === team.id);
+                html += `
+                    <div class="team-card" style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                        <h3 style="color: #2c3e50; margin-bottom: 10px;">${team.name}</h3>
+                        <p><strong>Kode Tim:</strong> ${team.code}</p>
+                        <p><strong>Jumlah Anggota:</strong> ${teamMembers.length}</p>
+                        <div style="margin-top: 10px;">
+                            <strong>Anggota:</strong>
+                            ${teamMembers.length > 0 
+                                ? `<ul style="margin: 5px 0; padding-left: 20px;">
+                                    ${teamMembers.map(member => `<li>${member.name} (${member.email})</li>`).join('')}
+                                   </ul>` 
+                                : '<p style="color: #999; font-style: italic;">Belum ada anggota</p>'
+                            }
+                        </div>
+                    </div>
+                `;
+            });
+            
+            teamListDiv.innerHTML = html;
+        }
+    </script>
 </body>
 </html>

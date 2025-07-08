@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug TeamTune Leadership</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .user-info { background: #e7f3ff; }
+        .team-info { background: #fff2e7; }
+        .role-info { background: #f0fff0; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        button { padding: 10px 15px; margin: 5px; border: none; border-radius: 3px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-success { background: #28a745; color: white; }
+    </style>
+</head>
+<body>
+    <h1>🔍 TeamTune Leadership Debug</h1>
+
+    <div class="debug-section user-info">
+        <h3>👤 Current User</h3>
+        <div id="currentUserInfo"></div>
+    </div>
+
+    <div class="debug-section team-info">
+        <h3>🏆 Teams Data</h3>
+        <div id="teamsInfo"></div>
+    </div>
+
+    <div class="debug-section role-info">
+        <h3>👥 All Users</h3>
+        <div id="allUsersInfo"></div>
+    </div>
+
+    <div class="debug-section">
+        <h3>🛠️ Debug Actions</h3>
+        <button class="btn-primary" onclick="refreshDebug()">🔄 Refresh Data</button>
+        <button class="btn-success" onclick="fixLeadership()">🔧 Fix Leadership</button>
+        <button class="btn-success" onclick="cleanupAnnouncements()">🧹 Clean Invalid Announcements</button>
+        <button class="btn-danger" onclick="clearData()">🗑️ Clear All Data</button>
+    </div>
+
+    <div class="debug-section">
+        <h3>📋 Leadership Check Result</h3>
+        <div id="leadershipCheck"></div>
+    </div>
+
+    <script>
+        function refreshDebug() {
+            // Current User
+            const currentUser = JSON.parse(localStorage.getItem('teamtune_current_user') || 'null');
+            document.getElementById('currentUserInfo').innerHTML = currentUser ? 
+                `<pre>${JSON.stringify(currentUser, null, 2)}</pre>` : 
+                '<p style="color: red;">❌ No current user found</p>';
+
+            // Teams
+            const teams = JSON.parse(localStorage.getItem('teams') || '[]');
+            document.getElementById('teamsInfo').innerHTML = teams.length > 0 ? 
+                `<pre>${JSON.stringify(teams, null, 2)}</pre>` : 
+                '<p style="color: orange;">⚠️ No teams found</p>';
+
+            // All Users
+            const users = JSON.parse(localStorage.getItem('teamtune_users') || '[]');
+            document.getElementById('allUsersInfo').innerHTML = users.length > 0 ? 
+                `<pre>${JSON.stringify(users, null, 2)}</pre>` : 
+                '<p style="color: orange;">⚠️ No users found</p>';
+
+            // Leadership Check
+            checkLeadership();
+        }
+
+        function checkLeadership() {
+            const currentUser = JSON.parse(localStorage.getItem('teamtune_current_user') || 'null');
+            const teams = JSON.parse(localStorage.getItem('teams') || '[]');
+            
+            let result = '<h4>Leadership Analysis:</h4>';
+            
+            if (!currentUser) {
+                result += '<p style="color: red;">❌ No current user logged in</p>';
+                document.getElementById('leadershipCheck').innerHTML = result;
+                return;
+            }
+
+            result += `<p><strong>User:</strong> ${currentUser.name} (ID: ${currentUser.id})</p>`;
+            result += `<p><strong>User Role:</strong> ${currentUser.role || 'undefined'}</p>`;
+            result += `<p><strong>User Team ID:</strong> ${currentUser.teamId || 'none'}</p>`;
+
+            if (currentUser.teamId) {
+                const userTeam = teams.find(t => t.id === currentUser.teamId);
+                if (userTeam) {
+                    result += `<p><strong>Team Found:</strong> ${userTeam.name}</p>`;
+                    result += `<p><strong>Team Leader ID:</strong> ${userTeam.leaderId || 'undefined'}</p>`;
+                    
+                    const isLeader1 = currentUser.role === 'team_leader';
+                    const isLeader2 = userTeam.leaderId === currentUser.id;
+                    
+                    result += `<p><strong>Role Check:</strong> ${isLeader1 ? '✅' : '❌'} (role === 'team_leader')</p>`;
+                    result += `<p><strong>Leader ID Check:</strong> ${isLeader2 ? '✅' : '❌'} (leaderId matches)</p>`;
+                    
+                    if (isLeader1 && isLeader2) {
+                        result += '<p style="color: green; font-weight: bold;">🎉 USER IS VALID LEADER!</p>';
+                    } else {
+                        result += '<p style="color: red; font-weight: bold;">❌ LEADERSHIP ISSUE DETECTED!</p>';
+                        if (!isLeader1) result += '<p style="color: red;">→ User role is not team_leader</p>';
+                        if (!isLeader2) result += '<p style="color: red;">→ Team leaderId does not match user ID</p>';
+                    }
+                } else {
+                    result += '<p style="color: red;">❌ Team not found in teams array</p>';
+                }
+            } else {
+                result += '<p style="color: orange;">⚠️ User has no team</p>';
+            }
+
+            document.getElementById('leadershipCheck').innerHTML = result;
+        }
+
+        function fixLeadership() {
+            const currentUser = JSON.parse(localStorage.getItem('teamtune_current_user') || 'null');
+            const teams = JSON.parse(localStorage.getItem('teams') || '[]');
+            const users = JSON.parse(localStorage.getItem('teamtune_users') || '[]');
+
+            if (!currentUser) {
+                alert('❌ No user logged in');
+                return;
+            }
+
+            // If user has no team, can't fix leadership
+            if (!currentUser.teamId) {
+                alert('❌ User has no team');
+                return;
+            }
+
+            // Find team and user
+            const teamIndex = teams.findIndex(t => t.id === currentUser.teamId);
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+
+            if (teamIndex === -1) {
+                alert('❌ Team not found');
+                return;
+            }
+
+            if (userIndex === -1) {
+                alert('❌ User not found in users array');
+                return;
+            }
+
+            // Check if team has no leader, make current user the leader
+            if (!teams[teamIndex].leaderId) {
+                teams[teamIndex].leaderId = currentUser.id;
+                users[userIndex].role = 'team_leader';
+                currentUser.role = 'team_leader';
+
+                // Save back to localStorage
+                localStorage.setItem('teams', JSON.stringify(teams));
+                localStorage.setItem('teamtune_users', JSON.stringify(users));
+                localStorage.setItem('teamtune_current_user', JSON.stringify(currentUser));
+
+                alert('✅ Leadership fixed! You are now the team leader. Refresh user dashboard to see changes.');
+            } else if (teams[teamIndex].leaderId === currentUser.id) {
+                // User is already leader in team, just fix the role
+                users[userIndex].role = 'team_leader';
+                currentUser.role = 'team_leader';
+
+                localStorage.setItem('teamtune_users', JSON.stringify(users));
+                localStorage.setItem('teamtune_current_user', JSON.stringify(currentUser));
+
+                alert('✅ User role fixed! You are confirmed as team leader. Refresh user dashboard to see changes.');
+            } else {
+                alert('❌ Another user is already the leader of this team');
+            }
+
+            refreshDebug();
+        }
+
+        function clearData() {
+            if (confirm('Are you sure you want to clear all data?')) {
+                localStorage.removeItem('teamtune_current_user');
+                localStorage.removeItem('teams');
+                localStorage.removeItem('teamtune_users');
+                localStorage.removeItem('teamtune_moods');
+                localStorage.removeItem('team_announcements');
+                alert('🗑️ All data cleared');
+                refreshDebug();
+            }
+        }
+
+        function cleanupAnnouncements() {
+            const announcements = JSON.parse(localStorage.getItem('team_announcements') || '[]');
+            const teams = JSON.parse(localStorage.getItem('teams') || '[]');
+            const users = JSON.parse(localStorage.getItem('teamtune_users') || '[]');
+            
+            const beforeCount = announcements.length;
+            
+            const validAnnouncements = announcements.filter(announcement => {
+                const team = teams.find(t => t.id === announcement.teamId);
+                const author = users.find(u => u.id === announcement.authorId);
+                
+                // Keep announcement only if author is verified team leader
+                return team && author && 
+                       author.role === 'team_leader' && 
+                       team.leaderId === author.id;
+            });
+            
+            localStorage.setItem('team_announcements', JSON.stringify(validAnnouncements));
+            
+            const removedCount = beforeCount - validAnnouncements.length;
+            alert(`🧹 Cleaned up ${removedCount} invalid announcements. ${validAnnouncements.length} valid announcements remaining.`);
+            refreshDebug();
+        }
+
+        // Auto refresh on load
+        refreshDebug();
+    </script>
+</body>
+</html>

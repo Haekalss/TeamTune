@@ -1,0 +1,96 @@
+/* auth.css - Halaman Buat Tim dan Gabung Tim */
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background-color: var(--background-medium, #EFF2F5);
+  color: var(--text-dark, #343A40);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.auth-container {
+  background-color: var(--card-bg, #FFFFFF);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  max-width: 500px;
+  width: 100%;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.auth-container h2 {
+  color: var(--primary-color, #4A90E2);
+  font-weight: 600;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.auth-container label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.auth-container input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #D1D9E6;
+  margin-bottom: 20px;
+  font-size: 1em;
+  transition: all 0.3s ease;
+}
+
+.auth-container input:focus {
+  outline: none;
+  border-color: var(--primary-color, #4A90E2);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+.auth-container button {
+  background-color: var(--primary-color, #4A90E2);
+  color: white;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 8px;
+  font-size: 1.05em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.auth-container button:hover {
+  background-color: var(--primary-dark, #357ABD);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.auth-container a {
+  display: block;
+  margin-top: 20px;
+  text-align: center;
+  color: var(--primary-color, #4A90E2);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-container a:hover {
+  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

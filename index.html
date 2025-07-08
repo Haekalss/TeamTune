@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TeamTune - Team Mood Tracking Platform</title>
     <!-- Favicon for browser tab -->
-    <link rel="icon" href="../image/llogo-removebg-preview (1).png" type="image/png">
-    <link rel="shortcut icon" href="../image/llogo-removebg-preview (1).png" type="image/png">
+    <link rel="icon" href="image/llogo-removebg-preview (1).png" type="image/png">
+    <link rel="shortcut icon" href="image/llogo-removebg-preview (1).png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -194,6 +194,86 @@
             line-height: 1.6;
         }
 
+        /* Statistics Section */
+        .stats {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .how-it-works h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 60px;
+            margin-bottom: 1rem;
+        }
+
+        .step h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .step p {
+            color: #666;
+            line-height: 1.6;
+        }
+
         /* CTA Section */
         .cta {
             padding: 80px 0;
@@ -244,6 +324,29 @@
                 gap: 0.5rem;
             }
         }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card:nth-child(4) { animation-delay: 0.4s; }
+        .feature-card:nth-child(5) { animation-delay: 0.5s; }
+        .feature-card:nth-child(6) { animation-delay: 0.6s; }
     </style>
 </head>
 <body>
@@ -251,16 +354,17 @@
     <header class="header">
         <nav class="nav container">
             <div class="logo">
-                <img src="../image/llogo-removebg-preview (1).png" alt="TeamTune Logo">
+                <img src="image/llogo-removebg-preview (1).png" alt="TeamTune Logo">
                 <span>TeamTune</span>
             </div>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
                 <li><a href="#about">About</a></li>
             </ul>
             <div class="auth-buttons">
-                <a href="../login.html" class="btn btn-secondary">Login</a>
-                <a href="../register.html" class="btn btn-primary">Sign Up</a>
+                <a href="login.html" class="btn btn-secondary">Login</a>
+                <a href="register.html" class="btn btn-primary">Sign Up</a>
             </div>
         </nav>
     </header>
@@ -270,8 +374,8 @@
         <div class="container">
             <h1>Track Your Team's Mood</h1>
             <p>Build stronger teams through better understanding. TeamTune helps you monitor team morale, boost collaboration, and create a positive work environment.</p>
-            <a href="../register.html" class="btn btn-primary">Get Started Free</a>
-            <a href="../login.html" class="btn btn-secondary">Login</a>
+            <a href="register.html" class="btn btn-primary">Get Started Free</a>
+            <a href="login.html" class="btn btn-secondary">Login</a>
         </div>
     </section>
 
@@ -326,12 +430,65 @@
         </div>
     </section>
 
+    <!-- Statistics Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Teams Created</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2,500+</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">15,000+</div>
+                    <div class="stat-label">Mood Check-ins</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">Team Satisfaction</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2>How TeamTune Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Sign Up & Create Team</h3>
+                    <p>Register your account and create a team or join an existing one using a team code.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Daily Mood Check-ins</h3>
+                    <p>Team members submit their daily mood using simple emoji interface with optional comments.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>View Analytics</h3>
+                    <p>Monitor team mood trends, get smart insights, and identify areas for improvement.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Take Action</h3>
+                    <p>Use feedback and announcements to improve team collaboration and workplace happiness.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- CTA Section -->
     <section class="cta">
         <div class="container">
             <h2>Ready to Build a Happier Team?</h2>
             <p>Join thousands of teams already using TeamTune to improve collaboration and workplace satisfaction.</p>
-            <a href="../register.html" class="btn btn-primary">Start Your Free Trial</a>
+            <a href="register.html" class="btn btn-primary">Start Your Free Trial</a>
         </div>
     </section>
 
@@ -343,26 +500,6 @@
     </footer>
 
     <script>
-        // Check if user is already logged in
-        document.addEventListener('DOMContentLoaded', () => {
-            const currentUser = localStorage.getItem('teamtune_current_user');
-            if (currentUser) {
-                // If user is logged in, update the buttons
-                const authButtons = document.querySelector('.auth-buttons');
-                const user = JSON.parse(currentUser);
-                authButtons.innerHTML = `
-                    <span style="color: white; margin-right: 1rem;">Hello, ${user.name}!</span>
-                    <a href="../user-dashboard.html" class="btn btn-primary">Dashboard</a>
-                    <button onclick="logout()" class="btn btn-secondary">Logout</button>
-                `;
-            }
-        });
-
-        function logout() {
-            localStorage.removeItem('teamtune_current_user');
-            location.reload();
-        }
-
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -376,76 +513,76 @@
                 }
             });
         });
+
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentUser = localStorage.getItem('teamtune_current_user');
+            if (currentUser) {
+                // If user is logged in, update the buttons
+                const authButtons = document.querySelector('.auth-buttons');
+                const user = JSON.parse(currentUser);
+                authButtons.innerHTML = `
+                    <span style="color: white; margin-right: 1rem;">Hello, ${user.name}!</span>
+                    <a href="index.html" class="btn btn-primary">Dashboard</a>
+                    <button onclick="logout()" class="btn btn-secondary">Logout</button>
+                `;
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('teamtune_current_user');
+            location.reload();
+        }
+
+        // Add scroll effect to header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.backdropFilter = 'blur(20px)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.1)';
+                header.style.backdropFilter = 'blur(10px)';
+            }
+        });
+
+        // Animate statistics on scroll
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statNumbers = entry.target.querySelectorAll('.stat-number');
+                    statNumbers.forEach(stat => {
+                        const finalNumber = stat.textContent;
+                        const isPercentage = finalNumber.includes('%');
+                        const numValue = parseInt(finalNumber.replace(/[^\d]/g, ''));
+                        
+                        let currentNumber = 0;
+                        const increment = numValue / 50;
+                        
+                        const timer = setInterval(() => {
+                            currentNumber += increment;
+                            if (currentNumber >= numValue) {
+                                stat.textContent = finalNumber;
+                                clearInterval(timer);
+                            } else {
+                                stat.textContent = Math.floor(currentNumber) + (isPercentage ? '%' : '+');
+                            }
+                        }, 30);
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const statsSection = document.querySelector('.stats');
+        if (statsSection) {
+            observer.observe(statsSection);
+        }
     </script>
 </body>
-</html>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
-    </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
-        }
-      });
-    </script>
-  </body>
 </html>
